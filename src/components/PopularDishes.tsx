@@ -1,7 +1,7 @@
 import DishPhoto from "./DishPhoto";
-import { popularDishes } from "@/lib/menu-data";
+import type { DishCard } from "@/lib/data";
 
-export default function PopularDishes() {
+export default function PopularDishes({ dishes }: { dishes: DishCard[] }) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
       <div className="mb-10 flex items-end justify-between">
@@ -28,9 +28,9 @@ export default function PopularDishes() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {popularDishes.map((dish) => (
+        {dishes.map((dish) => (
           <article
-            key={dish.slug}
+            key={dish.id}
             className="group rounded-2xl bg-white p-5 text-center shadow-sm ring-1 ring-black/5 transition-shadow hover:shadow-lg"
           >
             <div className="relative mx-auto mb-4 h-28 w-28">
@@ -41,7 +41,7 @@ export default function PopularDishes() {
                 emojiClassName="text-4xl"
               />
               <span className="absolute -top-1 right-0 rounded-full bg-brand-cream px-2 py-0.5 text-[11px] font-semibold text-brand-navy">
-                ({dish.rating}) ★
+                ★ {dish.rating}
               </span>
             </div>
             <h3 className="font-semibold text-brand-navy">{dish.name}</h3>

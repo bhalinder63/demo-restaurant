@@ -1,8 +1,14 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import PopularDishes from "@/components/PopularDishes";
+import { getFeaturedDish, getPopularDishes } from "@/lib/data";
 
-export default function Home() {
+export default async function Home() {
+  const [featuredDish, popularDishes] = await Promise.all([
+    getFeaturedDish(),
+    getPopularDishes(),
+  ]);
+
   return (
     <div className="relative flex-1 overflow-hidden bg-background">
       <div
@@ -16,8 +22,8 @@ export default function Home() {
 
       <div className="relative">
         <Header />
-        <Hero />
-        <PopularDishes />
+        {featuredDish && <Hero featuredDish={featuredDish} />}
+        <PopularDishes dishes={popularDishes} />
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import DishPhoto from "./DishPhoto";
-import { featuredDish } from "@/lib/menu-data";
+import type { DishCard } from "@/lib/data";
 
-export default function Hero() {
+export default function Hero({ featuredDish }: { featuredDish: DishCard }) {
   return (
     <section className="relative overflow-hidden">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 pb-24 pt-8 lg:grid-cols-2">
