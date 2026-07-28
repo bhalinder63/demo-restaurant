@@ -38,7 +38,7 @@ export default function Hero({ featuredDish }: { featuredDish: DishCard }) {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
-              href="/reservation"
+              href="/menu"
               className="rounded-full bg-brand-orange px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-brand-orange-dark"
             >
               Reserve a Table

@@ -1,12 +1,9 @@
 import Link from "next/link";
+import CartLink from "./CartLink";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Menu", href: "/menu" },
-  { label: "Reservation", href: "/reservation" },
-  { label: "Contact", href: "/contact" },
-  { label: "About us", href: "/about" },
-  { label: "Blog", href: "/blog" },
 ];
 
 export default function Header() {
@@ -39,13 +36,7 @@ export default function Header() {
           >
             🔍
           </button>
-          <Link
-            href="/cart"
-            aria-label="Cart"
-            className="hidden h-9 w-9 items-center justify-center rounded-full text-brand-navy/70 transition-colors hover:bg-brand-cream sm:flex"
-          >
-            🛒
-          </Link>
+          <CartLink />
           <button
             aria-label="Wishlist"
             className="hidden h-9 w-9 items-center justify-center rounded-full text-brand-navy/70 transition-colors hover:bg-brand-cream sm:flex"
