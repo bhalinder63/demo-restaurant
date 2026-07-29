@@ -1,12 +1,8 @@
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import DishPhoto from "@/components/DishPhoto";
+import OrderStatusTracker from "@/components/OrderStatusTracker";
 import { getOrderById } from "@/lib/data";
-import {
-  ORDER_STATUS_FLOW,
-  ORDER_STATUS_LABEL,
-  ORDER_STATUS_COLOR,
-} from "@/lib/order-status";
 
 export default async function OrderStatusPage({
   params,
@@ -18,58 +14,16 @@ export default async function OrderStatusPage({
 
   if (!order) notFound();
 
-  const isCancelled = order.status === "CANCELLED";
-  const currentStepIndex = ORDER_STATUS_FLOW.indexOf(
-    order.status as (typeof ORDER_STATUS_FLOW)[number]
-  );
-
   return (
     <div className="relative flex-1 bg-background">
       <Header />
       <main className="mx-auto max-w-2xl px-6 pb-24 pt-4">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-brand-navy">Order confirmed 🎉</h1>
-            <p className="mt-1 text-sm text-brand-navy/50">Order #{order.id.slice(-8)}</p>
-          </div>
-          <span
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold ${ORDER_STATUS_COLOR[order.status] ?? "bg-gray-100 text-gray-700"}`}
-          >
-            {ORDER_STATUS_LABEL[order.status] ?? order.status}
-          </span>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-brand-navy">Order confirmed 🎉</h1>
+          <p className="mt-1 text-sm text-brand-navy/50">Order #{order.id.slice(-8)}</p>
         </div>
 
-        {!isCancelled && (
-          <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-            <div className="flex items-center justify-between">
-              {ORDER_STATUS_FLOW.map((step, i) => (
-                <div key={step} className="flex flex-1 flex-col items-center last:flex-none">
-                  <div className="flex w-full items-center">
-                    <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                        i <= currentStepIndex
-                          ? "bg-brand-orange text-white"
-                          : "bg-brand-navy/10 text-brand-navy/40"
-                      }`}
-                    >
-                      {i <= currentStepIndex ? "✓" : i + 1}
-                    </div>
-                    {i < ORDER_STATUS_FLOW.length - 1 && (
-                      <div
-                        className={`h-0.5 flex-1 ${
-                          i < currentStepIndex ? "bg-brand-orange" : "bg-brand-navy/10"
-                        }`}
-                      />
-                    )}
-                  </div>
-                  <p className="mt-2 max-w-[70px] text-center text-[11px] text-brand-navy/60">
-                    {ORDER_STATUS_LABEL[step]}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <OrderStatusTracker orderId={order.id} initialStatus={order.status} />
 
         <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
           <h2 className="mb-4 font-semibold text-brand-navy">Items</h2>

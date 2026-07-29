@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 
@@ -82,6 +83,10 @@ export async function placeOrder(
 
     return order.id;
   });
+
+  revalidatePath("/");
+  revalidatePath("/menu");
+  revalidatePath("/admin/menu");
 
   return { orderId };
 }
