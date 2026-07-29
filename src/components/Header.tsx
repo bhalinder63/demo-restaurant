@@ -1,12 +1,16 @@
 import Link from "next/link";
 import CartLink from "./CartLink";
+import { auth, signOut } from "@/auth";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Menu", href: "/menu" },
 ];
 
-export default function Header() {
+export default async function Header() {
+  const session = await auth();
+  const user = session?.user;
+
   return (
     <header className="relative z-20 w-full">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -27,6 +31,16 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          {user?.role === "OWNER" && (
+            <Link href="/admin" className="transition-colors hover:text-brand-orange">
+              Admin
+            </Link>
+          )}
+          {user?.role === "CUSTOMER" && (
+            <Link href="/orders" className="transition-colors hover:text-brand-orange">
+              My Orders
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-4">
@@ -43,12 +57,34 @@ export default function Header() {
           >
             ♡
           </button>
-          <Link
-            href="/login"
-            className="rounded-full bg-brand-orange px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-orange-dark"
-          >
-            Log In
-          </Link>
+
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="hidden text-sm text-brand-navy/70 sm:inline">
+                Hi, {user.name?.split(" ")[0]}
+              </span>
+              <form
+                action={async () => {
+                  "use server";
+                  await signOut({ redirectTo: "/" });
+                }}
+              >
+                <button
+                  type="submit"
+                  className="rounded-full border border-brand-navy/20 px-4 py-2 text-sm font-semibold text-brand-navy transition-colors hover:border-brand-orange hover:text-brand-orange"
+                >
+                  Log out
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-full bg-brand-orange px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-orange-dark"
+            >
+              Log In
+            </Link>
+          )}
         </div>
       </div>
     </header>

@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
 export type PlaceOrderInput = {
   customerName: string;
@@ -27,6 +28,9 @@ export async function placeOrder(
       throw new Error("Invalid item quantity.");
     }
   }
+
+  const session = await auth();
+  const userId = session?.user?.id;
 
   const orderId = await prisma.$transaction(async (tx) => {
     let total = 0;
@@ -71,6 +75,7 @@ export async function placeOrder(
         deliveryAddress,
         total,
         status: "CONFIRMED",
+        userId,
         items: { create: orderItemsData },
       },
     });
