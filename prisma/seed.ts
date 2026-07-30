@@ -96,6 +96,18 @@ async function main() {
     },
   });
 
+  const customerPasswordHash = await bcrypt.hash("customer123", 10);
+  await prisma.user.upsert({
+    where: { email: "customer@foodie.test" },
+    update: {},
+    create: {
+      name: "Test Customer",
+      email: "customer@foodie.test",
+      passwordHash: customerPasswordHash,
+      role: "CUSTOMER",
+    },
+  });
+
   console.log("Seed complete.");
 }
 
