@@ -66,20 +66,42 @@ Because `Header` (`src/components/Header.tsx`) is an async Server Component that
 
 `src/components/OrderStatusTracker.tsx` (client component) polls `GET /api/orders/[id]` every 4s while the order is in a non-terminal state, and stops once it hits `DELIVERED`/`CANCELLED`. This was a deliberate choice over Postgres LISTEN/NOTIFY or a push service — see the project's architecture discussion for tradeoffs. If a "true push" upgrade is ever wanted, this is the component/endpoint to replace.
 
-### Menu item photos — emoji + fixed Tailwind gradient palette, no image uploads
+### Menu item photos — real uploads via Vercel Blob, emoji+gradient as fallback
 
-There's no image storage yet; dishes are rendered as an emoji over a Tailwind gradient (`src/components/DishPhoto.tsx`). The gradient class strings **must** come from `src/lib/gradients.ts` (`DISH_GRADIENTS`) rather than arbitrary free text — Tailwind's build-time class scanner only generates CSS for class names it can find as literal strings in the source tree, so an admin-entered arbitrary gradient string would silently produce no styling. The admin menu form (`MenuItemForm.tsx`) enforces this via a `<select>` bound to that constant; don't change it to a free-text input without also handling the Tailwind safelist implication.
+`MenuItem.imageUrl` (nullable) holds a real photo URL. `DishPhoto` (`src/components/DishPhoto.tsx`) renders that photo via `next/image` when present, and falls back to an emoji over a Tailwind gradient otherwise — every call site must pass `name` (used as `alt`/`aria-label`), `emoji`, and `gradient` regardless, since the fallback can always be hit (item has no photo, image fails, etc.).
+
+- The admin form (`MenuItemForm.tsx`) uploads via `uploadMenuItemImage` (`src/app/admin/actions.ts`), which calls `put()` from `@vercel/blob`. This requires a `BLOB_READ_WRITE_TOKEN` env var from a Vercel Blob store — see Environment variables below.
+- `next.config.ts` whitelists `images.unsplash.com` and `*.public.blob.vercel-storage.com` in `images.remotePatterns`; both are required for `next/image` to render photos from either source.
+- The gradient class strings (fallback only) **must** come from `src/lib/gradients.ts` (`DISH_GRADIENTS`) rather than arbitrary free text — Tailwind's build-time class scanner only generates CSS for class names it can find as literal strings in the source tree, so an admin-entered arbitrary gradient string would silently produce no styling. The admin form enforces this via a `<select>` bound to that constant.
+- The 5 seeded dishes have real Unsplash photo URLs baked into `prisma/seed.ts` — verify a new candidate URL actually resolves (`curl -I`) before adding one; don't guess Unsplash photo IDs from memory.
 
 ### Order status flow
 
-Canonical status list/labels/colors live in `src/lib/order-status.ts` (`ORDER_STATUS_FLOW`, `ORDER_STATUS_LABEL`, `ORDER_STATUS_COLOR`) and are shared by the customer tracker, the admin order list, and the order confirmation page — update there, not per-component, if statuses change.
+Canonical status list/labels/colors live in `src/lib/order-status.ts` (`ORDER_STATUS_FLOW`, `ORDER_STATUS_LABEL`, `ORDER_STATUS_COLOR`) and are shared by the customer tracker, the admin order list, and the order confirmation page — update there, not per-component, if statuses change. The color map includes `dark:` variants; keep both in sync if you add a status.
+
+### Currency — INR, centralized formatter
+
+All prices display via `formatCurrency()` in `src/lib/currency.ts` (`Intl.NumberFormat("en-IN", { currency: "INR", maximumFractionDigits: 0 })` → e.g. `₹280`). Never hand-roll a `$`/`.toFixed(2)` price display — every existing price display in the app goes through this helper; a new one should too. `MenuItem.price` is still stored as `Decimal` in whole-plus-fractional rupees (schema unchanged), the formatter just controls display.
+
+### Theming — CSS custom properties, dark mode via `prefers-color-scheme`
+
+There's no theme toggle; dark mode follows the OS setting automatically. The brand colors are CSS variables (`src/app/globals.css`) redefined inside a `@media (prefers-color-scheme: dark)` block, then exposed to Tailwind via `@theme inline` — so utilities like `text-brand-navy`, `bg-brand-cream`, `bg-background` adapt for free with **no `dark:` prefix needed** anywhere they're used. Card surfaces use a dedicated `--surface` token (`bg-surface`, light: white, dark: `#251e17`) rather than Tailwind's static `bg-white` — if you add a new card/panel, use `bg-surface`, not `bg-white`, or it won't adapt. Static Tailwind palette colors (the `red-`/`amber-`/`green-`/etc. used for error banners and status badges) don't auto-adapt and need explicit `dark:` variants added by hand — see `ORDER_STATUS_COLOR` in `src/lib/order-status.ts` for the pattern.
+
+### Typography — two-font pairing via a `font-display` token
+
+Body text uses Poppins (`--font-sans`); headings (`h1`/`h2`, and dish-name `h3`s) use Playfair Display via a `font-display` utility class, both loaded in `src/app/layout.tsx` with `next/font/google` and wired through `@theme inline` in `globals.css` (`--font-display: var(--font-playfair)`, same pattern as `--font-sans`). Apply `font-display` explicitly per-heading; it isn't the default for `<h*>` tags. Minor sub-labels (e.g. "Items" / "Delivery details" on the order page) are deliberately left in the body font as a secondary tier — that's intentional, not a gap.
+
+### Toasts and loading states
+
+`src/lib/toast-context.tsx` (`ToastProvider`/`useToast`) is a minimal custom toast system (no external dependency) wrapping the app in `layout.tsx` alongside `CartProvider`; call `showToast(message)` from any client component for transient feedback (used today for cart add/remove). Route-level `loading.tsx` files exist for `/`, `/menu`, `/admin`, `/admin/orders`, and `/admin/menu` (Next.js's file convention — auto-wraps the corresponding `page.tsx` in Suspense); they render `src/components/Skeleton.tsx` pulse blocks shaped like the real layout. Since there's no shared `layout.tsx` under `/admin`, each admin sub-route needs its **own** `loading.tsx` — one at `/admin` does not cover `/admin/orders` or `/admin/menu`.
 
 ## Environment variables
 
 - `DATABASE_URL` — Neon Postgres connection string (pooled).
 - `AUTH_SECRET` — Auth.js session secret.
+- `BLOB_READ_WRITE_TOKEN` — Vercel Blob store token, needed for admin menu-item photo uploads (`uploadMenuItemImage`). Provisioned by creating a Blob store under Vercel → Storage, same flow as the Neon integration. Not required for anything else to work.
 
-Both live in a gitignored `.env` (not `.env.local` — `prisma.config.ts` and the app both read `.env`; consolidate here rather than reintroducing `.env.local`). The same values must also be set in Vercel's project environment variables for the deployed site.
+These live in a gitignored `.env` (not `.env.local` — `prisma.config.ts` and the app both read `.env`; consolidate here rather than reintroducing `.env.local`). The same values must also be set in Vercel's project environment variables for the deployed site.
 
 ## Seeded accounts
 
