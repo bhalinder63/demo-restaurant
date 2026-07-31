@@ -1,4 +1,5 @@
 import DishPhoto from "./DishPhoto";
+import AddToCartButton from "./AddToCartButton";
 import type { DishCard } from "@/lib/data";
 import { formatCurrency } from "@/lib/currency";
 
@@ -54,6 +55,9 @@ export default function PopularDishes({ dishes }: { dishes: DishCard[] }) {
             <p className="mt-2 line-clamp-2 text-xs text-brand-navy/50">
               {dish.description}
             </p>
+            <div className="mt-4">
+              <AddToCartButton dish={dish} />
+            </div>
           </article>
         ))}
       </div>
