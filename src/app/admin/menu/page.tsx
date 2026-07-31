@@ -11,7 +11,7 @@ export default async function AdminMenuPage() {
     <div className="relative flex-1 bg-background">
       <Header />
       <main className="mx-auto max-w-4xl px-6 pb-24 pt-4">
-        <h1 className="mb-6 text-3xl font-bold text-brand-navy">Owner Dashboard</h1>
+        <h1 className="mb-6 font-display text-3xl font-bold text-brand-navy">Owner Dashboard</h1>
         <AdminNav active="/admin/menu" />
 
         <div className="mb-6 flex justify-end">

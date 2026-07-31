@@ -9,7 +9,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl: string }) {
   return (
     <form
       action={formAction}
-      className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5"
+      className="flex flex-col gap-4 rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-black/5 dark:ring-white/10"
     >
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
@@ -22,7 +22,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl: string }) {
           name="email"
           type="email"
           required
-          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange"
+          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange focus-visible:ring-2 focus-visible:ring-brand-orange/40 focus-visible:ring-offset-1"
           placeholder="you@example.com"
         />
       </div>
@@ -36,13 +36,13 @@ export default function LoginForm({ callbackUrl }: { callbackUrl: string }) {
           name="password"
           type="password"
           required
-          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange"
+          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange focus-visible:ring-2 focus-visible:ring-brand-orange/40 focus-visible:ring-offset-1"
           placeholder="••••••••"
         />
       </div>
 
       {errorMessage && (
-        <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{errorMessage}</p>
+        <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">{errorMessage}</p>
       )}
 
       <button

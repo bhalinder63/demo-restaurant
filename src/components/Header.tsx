@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Search, Heart } from "lucide-react";
 import CartLink from "./CartLink";
 import { auth, signOut } from "@/auth";
 
@@ -13,7 +14,7 @@ export default async function Header() {
 
   return (
     <header className="relative z-20 w-full">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+      <div className="mx-auto flex max-w-page items-center justify-between px-6 py-6">
         <Link href="/" className="flex items-center gap-2 text-lg font-bold text-brand-orange">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-orange text-white">
             🍕
@@ -46,16 +47,16 @@ export default async function Header() {
         <div className="flex items-center gap-4">
           <button
             aria-label="Search"
-            className="hidden h-9 w-9 items-center justify-center rounded-full text-brand-navy/70 transition-colors hover:bg-brand-cream sm:flex"
+            className="hidden h-11 w-11 items-center justify-center rounded-full text-brand-navy/70 transition-colors hover:bg-brand-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange sm:flex"
           >
-            🔍
+            <Search className="h-5 w-5" strokeWidth={2} />
           </button>
           <CartLink />
           <button
             aria-label="Wishlist"
-            className="hidden h-9 w-9 items-center justify-center rounded-full text-brand-navy/70 transition-colors hover:bg-brand-cream sm:flex"
+            className="hidden h-11 w-11 items-center justify-center rounded-full text-brand-navy/70 transition-colors hover:bg-brand-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange sm:flex"
           >
-            ♡
+            <Heart className="h-5 w-5" strokeWidth={2} />
           </button>
 
           {user ? (

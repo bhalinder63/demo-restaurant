@@ -6,7 +6,7 @@ export default function CartPage() {
     <div className="relative flex-1 bg-background">
       <Header />
       <main className="mx-auto max-w-3xl px-6 pb-24 pt-4">
-        <h1 className="mb-8 text-3xl font-bold text-brand-navy">Your Cart</h1>
+        <h1 className="mb-8 font-display text-3xl font-bold text-brand-navy">Your Cart</h1>
         <CartView />
       </main>
     </div>

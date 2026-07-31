@@ -8,6 +8,7 @@ export type DishCard = {
   rating: string;
   emoji: string;
   gradient: string;
+  imageUrl: string | null;
   stockQty: number;
 };
 
@@ -19,6 +20,7 @@ function toDishCard(item: {
   rating: { toString(): string };
   emoji: string;
   gradient: string;
+  imageUrl: string | null;
   stockQty: number;
 }): DishCard {
   return {
@@ -29,6 +31,7 @@ function toDishCard(item: {
     rating: item.rating.toString(),
     emoji: item.emoji,
     gradient: item.gradient,
+    imageUrl: item.imageUrl,
     stockQty: item.stockQty,
   };
 }
@@ -88,6 +91,7 @@ export type OrderDetail = {
     name: string;
     emoji: string;
     gradient: string;
+    imageUrl: string | null;
     quantity: number;
     priceEach: number;
   }[];
@@ -113,6 +117,7 @@ export async function getOrderById(id: string): Promise<OrderDetail | null> {
       name: oi.menuItem.name,
       emoji: oi.menuItem.emoji,
       gradient: oi.menuItem.gradient,
+      imageUrl: oi.menuItem.imageUrl,
       quantity: oi.quantity,
       priceEach: Number(oi.priceEach.toString()),
     })),
@@ -147,6 +152,29 @@ export async function getAllOrders(): Promise<AdminOrderSummary[]> {
     createdAt: o.createdAt,
     itemCount: o.items.reduce((sum, i) => sum + i.quantity, 0),
   }));
+}
+
+export type TodayStats = {
+  orderCount: number;
+  revenue: number;
+};
+
+export async function getTodayStats(): Promise<TodayStats> {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const orders = await prisma.order.findMany({
+    where: {
+      createdAt: { gte: startOfToday },
+      status: { not: "CANCELLED" },
+    },
+    select: { total: true },
+  });
+
+  return {
+    orderCount: orders.length,
+    revenue: orders.reduce((sum, o) => sum + Number(o.total.toString()), 0),
+  };
 }
 
 export type AdminMenuItem = DishCard & {

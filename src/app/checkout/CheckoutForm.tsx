@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
+import { formatCurrency } from "@/lib/currency";
 import { placeOrder } from "./actions";
 
 export default function CheckoutForm() {
@@ -52,7 +53,7 @@ export default function CheckoutForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5"
+      className="flex flex-col gap-5 rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-black/5 dark:ring-white/10"
     >
       <div className="flex flex-col gap-1">
         <label htmlFor="customerName" className="text-sm font-medium text-brand-navy">
@@ -63,7 +64,7 @@ export default function CheckoutForm() {
           required
           value={customerName}
           onChange={(e) => setCustomerName(e.target.value)}
-          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange"
+          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange focus-visible:ring-2 focus-visible:ring-brand-orange/40 focus-visible:ring-offset-1"
           placeholder="Jane Doe"
         />
       </div>
@@ -78,7 +79,7 @@ export default function CheckoutForm() {
           required
           value={customerPhone}
           onChange={(e) => setCustomerPhone(e.target.value)}
-          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange"
+          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange focus-visible:ring-2 focus-visible:ring-brand-orange/40 focus-visible:ring-offset-1"
           placeholder="+1 555 123 4567"
         />
       </div>
@@ -93,7 +94,7 @@ export default function CheckoutForm() {
           rows={3}
           value={deliveryAddress}
           onChange={(e) => setDeliveryAddress(e.target.value)}
-          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange"
+          className="rounded-lg border border-brand-navy/15 px-4 py-2 text-sm outline-none focus:border-brand-orange focus-visible:ring-2 focus-visible:ring-brand-orange/40 focus-visible:ring-offset-1"
           placeholder="123 Main Street, Apt 4B, Springfield"
         />
       </div>
@@ -104,23 +105,23 @@ export default function CheckoutForm() {
             <span>
               {item.name} × {item.quantity}
             </span>
-            <span>${(item.price * item.quantity).toFixed(2)}</span>
+            <span>{formatCurrency(item.price * item.quantity)}</span>
           </div>
         ))}
         <div className="mt-2 flex justify-between text-base font-bold text-brand-navy">
           <span>Total</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>{formatCurrency(subtotal)}</span>
         </div>
       </div>
 
-      {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">{error}</p>}
 
       <button
         type="submit"
         disabled={submitting}
         className="rounded-full bg-brand-orange px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-brand-orange-dark disabled:opacity-60"
       >
-        {submitting ? "Placing order…" : `Pay $${subtotal.toFixed(2)} (simulated)`}
+        {submitting ? "Placing order…" : `Pay ${formatCurrency(subtotal)} (simulated)`}
       </button>
       <p className="text-center text-xs text-brand-navy/40">
         This is a demo checkout — no real payment is processed.

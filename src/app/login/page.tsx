@@ -13,7 +13,7 @@ export default async function LoginPage({
     <div className="relative flex-1 bg-background">
       <Header />
       <main className="mx-auto max-w-md px-6 pb-24 pt-4">
-        <h1 className="mb-8 text-3xl font-bold text-brand-navy">Log In</h1>
+        <h1 className="mb-8 font-display text-3xl font-bold text-brand-navy">Log In</h1>
         <LoginForm callbackUrl={callbackUrl ?? "/"} />
         <p className="mt-4 text-center text-sm text-brand-navy/60">
           Don&apos;t have an account?{" "}

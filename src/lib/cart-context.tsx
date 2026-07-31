@@ -14,6 +14,7 @@ export type CartItem = {
   price: number;
   emoji: string;
   gradient: string;
+  imageUrl: string | null;
   quantity: number;
 };
 

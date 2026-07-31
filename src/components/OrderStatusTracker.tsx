@@ -54,14 +54,14 @@ export default function OrderStatusTracker({
           {TERMINAL_STATUSES.has(status) ? "Final status" : "Live status — updates automatically"}
         </p>
         <span
-          className={`rounded-full px-4 py-1.5 text-sm font-semibold ${ORDER_STATUS_COLOR[status] ?? "bg-gray-100 text-gray-700"}`}
+          className={`rounded-full px-4 py-1.5 text-sm font-semibold ${ORDER_STATUS_COLOR[status] ?? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"}`}
         >
           {ORDER_STATUS_LABEL[status] ?? status}
         </span>
       </div>
 
       {!isCancelled && (
-        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+        <div className="rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-black/5 dark:ring-white/10">
           <div className="flex items-center justify-between">
             {ORDER_STATUS_FLOW.map((step, i) => (
               <div key={step} className="flex flex-1 flex-col items-center last:flex-none">

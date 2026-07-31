@@ -3,13 +3,16 @@
 import Link from "next/link";
 import DishPhoto from "@/components/DishPhoto";
 import { useCart } from "@/lib/cart-context";
+import { useToast } from "@/lib/toast-context";
+import { formatCurrency } from "@/lib/currency";
 
 export default function CartView() {
   const { items, setQuantity, removeItem, subtotal } = useCart();
+  const { showToast } = useToast();
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-black/5">
+      <div className="rounded-2xl bg-surface p-10 text-center shadow-sm ring-1 ring-black/5 dark:ring-white/10">
         <p className="text-brand-navy/60">Your cart is empty.</p>
         <Link
           href="/menu"
@@ -27,17 +30,19 @@ export default function CartView() {
         {items.map((item) => (
           <div
             key={item.menuItemId}
-            className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5"
+            className="flex items-center gap-4 rounded-2xl bg-surface p-4 shadow-sm ring-1 ring-black/5 dark:ring-white/10"
           >
             <DishPhoto
+              name={item.name}
               emoji={item.emoji}
               gradient={item.gradient}
+              imageUrl={item.imageUrl}
               className="h-16 w-16 shrink-0 border-4 border-brand-cream"
               emojiClassName="text-2xl"
             />
             <div className="min-w-0 flex-1">
               <p className="truncate font-semibold text-brand-navy">{item.name}</p>
-              <p className="text-sm text-brand-orange">${item.price.toFixed(2)}</p>
+              <p className="text-sm text-brand-orange">{formatCurrency(item.price)}</p>
             </div>
             <div className="flex items-center gap-2 rounded-full border border-brand-orange/40 px-1 py-1">
               <button
@@ -59,11 +64,14 @@ export default function CartView() {
               </button>
             </div>
             <p className="w-16 text-right text-sm font-bold text-brand-navy">
-              ${(item.price * item.quantity).toFixed(2)}
+              {formatCurrency(item.price * item.quantity)}
             </p>
             <button
               aria-label="Remove item"
-              onClick={() => removeItem(item.menuItemId)}
+              onClick={() => {
+                removeItem(item.menuItemId);
+                showToast(`Removed ${item.name} from cart`);
+              }}
               className="text-brand-navy/40 transition-colors hover:text-red-500"
             >
               ✕
@@ -72,10 +80,10 @@ export default function CartView() {
         ))}
       </div>
 
-      <div className="mt-8 flex items-center justify-between rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+      <div className="mt-8 flex items-center justify-between rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-black/5 dark:ring-white/10">
         <div>
           <p className="text-sm text-brand-navy/60">Subtotal</p>
-          <p className="text-2xl font-bold text-brand-navy">${subtotal.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-brand-navy">{formatCurrency(subtotal)}</p>
         </div>
         <Link
           href="/checkout"

@@ -8,6 +8,17 @@
   --brand-cream: #fdf3e2;
   --brand-peach: #fbd9a5;
   --brand-navy: #1c1a17;
+  --surface: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #18130f;
+    --foreground: #f2ece2;
+    --brand-cream: #2a2119;
+    --brand-navy: #f2ece2;
+    --surface: #251e17;
+  }
 }
 
 @theme inline {
@@ -18,11 +29,36 @@
   --color-brand-cream: var(--brand-cream);
   --color-brand-peach: var(--brand-peach);
   --color-brand-navy: var(--brand-navy);
+  --color-surface: var(--surface);
   --font-sans: var(--font-poppins);
+  --font-display: var(--font-playfair);
+  --container-page: 1440px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

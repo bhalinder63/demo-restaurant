@@ -1,11 +1,12 @@
 import DishPhoto from "./DishPhoto";
 import type { DishCard } from "@/lib/data";
+import { formatCurrency } from "@/lib/currency";
 
 export default function PopularDishes({ dishes }: { dishes: DishCard[] }) {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
+    <section className="mx-auto max-w-page px-6 py-16">
       <div className="mb-10 flex items-end justify-between">
-        <h2 className="text-3xl font-bold text-brand-navy">
+        <h2 className="font-display text-3xl font-bold text-brand-navy">
           Our Popular{" "}
           <span className="relative inline-block text-brand-orange">
             Dishes
@@ -31,22 +32,24 @@ export default function PopularDishes({ dishes }: { dishes: DishCard[] }) {
         {dishes.map((dish) => (
           <article
             key={dish.id}
-            className="group rounded-2xl bg-white p-5 text-center shadow-sm ring-1 ring-black/5 transition-shadow hover:shadow-lg"
+            className="group rounded-2xl bg-surface p-5 text-center shadow-sm ring-1 ring-black/5 dark:ring-white/10 transition-shadow hover:shadow-lg"
           >
-            <div className="relative mx-auto mb-4 h-28 w-28">
+            <div className="relative mx-auto mb-4 h-40 w-40">
               <DishPhoto
+                name={dish.name}
                 emoji={dish.emoji}
                 gradient={dish.gradient}
-                className="h-28 w-28 border-4 border-brand-cream"
-                emojiClassName="text-4xl"
+                imageUrl={dish.imageUrl}
+                className="h-40 w-40 border-4 border-brand-cream"
+                emojiClassName="text-5xl"
               />
               <span className="absolute -top-1 right-0 rounded-full bg-brand-cream px-2 py-0.5 text-[11px] font-semibold text-brand-navy">
                 ★ {dish.rating}
               </span>
             </div>
-            <h3 className="font-semibold text-brand-navy">{dish.name}</h3>
+            <h3 className="font-display font-semibold text-brand-navy">{dish.name}</h3>
             <p className="mt-1 text-sm font-bold text-brand-orange">
-              ${dish.price.toFixed(2)}
+              {formatCurrency(dish.price)}
             </p>
             <p className="mt-2 line-clamp-2 text-xs text-brand-navy/50">
               {dish.description}

@@ -1,8 +1,33 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { put } from "@vercel/blob";
 import { prisma } from "@/lib/db";
 import { requireOwner } from "@/lib/auth-helpers";
+
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+
+export async function uploadMenuItemImage(formData: FormData): Promise<{ url: string }> {
+  await requireOwner();
+
+  const file = formData.get("file");
+  if (!(file instanceof File)) {
+    throw new Error("No file provided.");
+  }
+  if (!file.type.startsWith("image/")) {
+    throw new Error("File must be an image.");
+  }
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error("Image must be smaller than 5MB.");
+  }
+
+  const blob = await put(`menu-items/${file.name}`, file, {
+    access: "public",
+    addRandomSuffix: true,
+  });
+
+  return { url: blob.url };
+}
 
 const VALID_STATUSES = [
   "PENDING",
@@ -38,6 +63,7 @@ export type MenuItemInput = {
   stockQty: number;
   emoji: string;
   gradient: string;
+  imageUrl: string | null;
   categoryId: string;
   isAvailable: boolean;
 };
@@ -72,6 +98,7 @@ export async function createMenuItem(input: MenuItemInput): Promise<{ id: string
       stockQty: input.stockQty,
       emoji: input.emoji.trim() || "🍽️",
       gradient: input.gradient,
+      imageUrl: input.imageUrl,
       categoryId: input.categoryId,
       isAvailable: input.isAvailable,
     },
@@ -94,6 +121,7 @@ export async function updateMenuItem(id: string, input: MenuItemInput): Promise<
       stockQty: input.stockQty,
       emoji: input.emoji.trim() || "🍽️",
       gradient: input.gradient,
+      imageUrl: input.imageUrl,
       categoryId: input.categoryId,
       isAvailable: input.isAvailable,
     },

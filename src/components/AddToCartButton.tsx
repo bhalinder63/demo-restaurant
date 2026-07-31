@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
+import { useToast } from "@/lib/toast-context";
 import type { DishCard } from "@/lib/data";
 
 export default function AddToCartButton({ dish }: { dish: DishCard }) {
   const { addItem, items, setQuantity } = useCart();
-  const [justAdded, setJustAdded] = useState(false);
+  const { showToast } = useToast();
 
   const inCart = items.find((i) => i.menuItemId === dish.id);
   const outOfStock = dish.stockQty <= 0;
@@ -18,9 +18,9 @@ export default function AddToCartButton({ dish }: { dish: DishCard }) {
       price: dish.price,
       emoji: dish.emoji,
       gradient: dish.gradient,
+      imageUrl: dish.imageUrl,
     });
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1200);
+    showToast(`Added ${dish.name} to cart`);
   }
 
   if (outOfStock) {
@@ -62,7 +62,7 @@ export default function AddToCartButton({ dish }: { dish: DishCard }) {
       onClick={handleAdd}
       className="w-full rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-orange-dark"
     >
-      {justAdded ? "Added ✓" : "Add to cart"}
+      Add to cart
     </button>
   );
 }

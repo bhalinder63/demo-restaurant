@@ -5,6 +5,7 @@ import Link from "next/link";
 import DishPhoto from "./DishPhoto";
 import { updateStockQty, toggleAvailability, deleteMenuItem } from "@/app/admin/actions";
 import type { AdminMenuItem } from "@/lib/data";
+import { formatCurrency } from "@/lib/currency";
 
 export default function MenuItemRow({ item }: { item: AdminMenuItem }) {
   const [stockInput, setStockInput] = useState(String(item.stockQty));
@@ -43,10 +44,12 @@ export default function MenuItemRow({ item }: { item: AdminMenuItem }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
+    <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-surface p-4 shadow-sm ring-1 ring-black/5 dark:ring-white/10">
       <DishPhoto
+        name={item.name}
         emoji={item.emoji}
         gradient={item.gradient}
+        imageUrl={item.imageUrl}
         className="h-14 w-14 shrink-0 border-2 border-brand-cream"
         emojiClassName="text-2xl"
       />
@@ -54,7 +57,7 @@ export default function MenuItemRow({ item }: { item: AdminMenuItem }) {
       <div className="min-w-[140px] flex-1">
         <p className="font-semibold text-brand-navy">{item.name}</p>
         <p className="text-xs text-brand-navy/50">
-          {item.categoryName} · ${item.price.toFixed(2)}
+          {item.categoryName} · {formatCurrency(item.price)}
         </p>
       </div>
 
@@ -65,7 +68,7 @@ export default function MenuItemRow({ item }: { item: AdminMenuItem }) {
           min={0}
           value={stockInput}
           onChange={(e) => setStockInput(e.target.value)}
-          className="w-20 rounded-lg border border-brand-navy/15 px-2 py-1 text-sm outline-none focus:border-brand-orange"
+          className="w-20 rounded-lg border border-brand-navy/15 px-2 py-1 text-sm outline-none focus:border-brand-orange focus-visible:ring-2 focus-visible:ring-brand-orange/40 focus-visible:ring-offset-1"
         />
         {stockChanged && (
           <button

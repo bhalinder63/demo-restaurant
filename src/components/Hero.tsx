@@ -1,16 +1,17 @@
 import Link from "next/link";
 import DishPhoto from "./DishPhoto";
 import type { DishCard } from "@/lib/data";
+import { formatCurrency } from "@/lib/currency";
 
 export default function Hero({ featuredDish }: { featuredDish: DishCard }) {
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 pb-24 pt-8 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-page grid-cols-1 items-center gap-12 px-6 pb-24 pt-8 lg:grid-cols-2">
         <div className="relative z-10">
           <p className="mb-3 text-sm font-semibold tracking-wide text-brand-orange">
             Welcome to
           </p>
-          <h1 className="text-4xl font-bold leading-tight text-brand-navy sm:text-5xl">
+          <h1 className="font-display text-4xl font-bold leading-tight text-brand-navy sm:text-5xl">
             Foodie Restaurant
             <br />
             and Enjoy{" "}
@@ -58,21 +59,25 @@ export default function Hero({ featuredDish }: { featuredDish: DishCard }) {
         <div className="relative mx-auto flex h-80 w-80 items-center justify-center sm:h-96 sm:w-96">
           <div className="absolute inset-0 rounded-full border-2 border-dashed border-brand-orange/50" />
           <DishPhoto
+            name={featuredDish.name}
             emoji={featuredDish.emoji}
             gradient={featuredDish.gradient}
-            className="h-64 w-64 border-8 border-white shadow-xl sm:h-72 sm:w-72"
+            imageUrl={featuredDish.imageUrl}
+            className="h-64 w-64 border-8 border-surface shadow-xl sm:h-72 sm:w-72"
             emojiClassName="text-7xl"
           />
 
-          <span className="absolute right-2 top-6 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-brand-navy shadow-md">
+          <span className="absolute right-2 top-6 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-brand-navy shadow-md">
             Best Food 🍳
           </span>
 
-          <div className="absolute -bottom-6 left-1/2 w-56 -translate-x-1/2 rounded-2xl bg-white p-3 shadow-xl sm:left-auto sm:right-0 sm:translate-x-0">
+          <div className="absolute -bottom-6 left-1/2 w-56 -translate-x-1/2 rounded-2xl bg-surface p-3 shadow-xl sm:left-auto sm:right-0 sm:translate-x-0">
             <div className="flex items-center gap-3">
               <DishPhoto
+                name={featuredDish.name}
                 emoji={featuredDish.emoji}
                 gradient={featuredDish.gradient}
+                imageUrl={featuredDish.imageUrl}
                 className="h-12 w-12 shrink-0"
                 emojiClassName="text-xl"
               />
@@ -89,7 +94,7 @@ export default function Hero({ featuredDish }: { featuredDish: DishCard }) {
               {featuredDish.description}
             </p>
             <p className="mt-2 text-sm font-bold text-brand-orange">
-              ${featuredDish.price}
+              {formatCurrency(featuredDish.price)}
             </p>
           </div>
         </div>

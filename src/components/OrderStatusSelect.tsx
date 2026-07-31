@@ -27,7 +27,7 @@ export default function OrderStatusSelect({
       value={status}
       onChange={handleChange}
       disabled={isPending}
-      className="rounded-full border border-brand-navy/15 px-3 py-1.5 text-xs font-semibold text-brand-navy outline-none focus:border-brand-orange disabled:opacity-50"
+      className="rounded-full border border-brand-navy/15 px-3 py-1.5 text-xs font-semibold text-brand-navy outline-none focus:border-brand-orange focus-visible:ring-2 focus-visible:ring-brand-orange/40 focus-visible:ring-offset-1 disabled:opacity-50"
     >
       {allStatuses.map((s) => (
         <option key={s} value={s}>
